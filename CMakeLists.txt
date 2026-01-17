@@ -61,7 +61,7 @@ include(FetchContent)
 
 set(ENABLE_SKYRIM_SE ON CACHE BOOL " " FORCE)
 set(ENABLE_SKYRIM_AE ON CACHE BOOL " " FORCE)
-set(ENABLE_SKYRIM_VR ON CACHE BOOL " " FORCE)
+set(ENABLE_SKYRIM_VR OFF CACHE BOOL " " FORCE)
 set(BUILD_TESTS OFF CACHE BOOL " " FORCE)
 
 add_subdirectory("$ENV{COMMONLIB_SSE_FOLDER}" ${CMAKE_CURRENT_BINARY_DIR}/_deps/clib-build)
@@ -109,16 +109,18 @@ endforeach()
 
 list(REMOVE_DUPLICATES header_dirs)
 
+
+find_path(DETOURS_INCLUDE_DIRS "detours/detours.h")
+find_library(DETOURS_LIBRARY detours REQUIRED)
+
 target_include_directories(
 	${PROJECT_NAME}
 	PRIVATE
     ${header_dirs}
     ${CLIB_UTIL_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui
-    ${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends
 )
-
+target_link_libraries(${PROJECT_NAME} PRIVATE ${DETOURS_LIBRARY})
 target_compile_definitions(${PRODUCT_NAME} PRIVATE MOD_NAME="${BEAUTIFUL_NAME}")
 
 
