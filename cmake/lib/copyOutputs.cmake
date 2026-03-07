@@ -1,3 +1,7 @@
+add_custom_target(copy_public_files ALL
+    DEPENDS ${PUBLIC_FILES}
+    COMMENT "Copying public files..."
+)
 
 function(copyOutputs TARGET_FOLDER)
     # If you specify an <OUTPUT_FOLDER> (including via environment variables)
@@ -28,14 +32,12 @@ function(copyOutputs TARGET_FOLDER)
     endif()
 
 
-    set(PUBLIC_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/public")
-    set(PUBLIC_OUTPUT_DIR "${TARGET_FOLDER}")
+    file(GLOB_RECURSE PUBLIC_FILES "${CMAKE_SOURCE_DIR}/public/*")
 
-    add_custom_command(
-        TARGET "${PROJECT_NAME}"
-        POST_BUILD
-        COMMAND "${CMAKE_COMMAND}" -E copy_directory "${PUBLIC_SOURCE_DIR}" "${PUBLIC_OUTPUT_DIR}"
-        VERBATIM
+    add_custom_command(TARGET copy_public_files PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_CURRENT_SOURCE_DIR}/public"
+            "${TARGET_FOLDER}"
     )
 
 endfunction()
